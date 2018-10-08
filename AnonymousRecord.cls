@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-' Version 1.1.2
+' Version 1.1.3
 
 '@Folder("CodeBase.Classes.Anonymous")
 
@@ -28,7 +28,7 @@ Private Sub Class_Initialize()
     Set this.NamedProperties = New Scripting.Dictionary
 End Sub
 
-Public Sub IAnonymousRecord_AddNamedProperty(ByVal PropertyName As String, ByVal PropertyValue As Variant)
+Public Sub IAnonymousRecord_AddNamedProperty(ByVal PropertyName As String, ByVal PropertyValue As Variant, Optional ByVal UpdateIfExisting As Boolean)
     With this.NamedProperties
         If Not .Exists(PropertyName) Then
             If PropertyName = DATA_HEADER_COLLEAGUE_ID Then
@@ -36,6 +36,8 @@ Public Sub IAnonymousRecord_AddNamedProperty(ByVal PropertyName As String, ByVal
             Else
                 .Add PropertyName, PropertyValue
             End If
+        ElseIf UpdateIfExisting Then
+            UpdateNamedProperty PropertyName, PropertyValue
         End If
     End With
 End Sub
@@ -53,6 +55,10 @@ Public Sub IAnonymousRecord_RemoveNamedProperty(ByVal PropertyName As String)
 End Sub
 
 Public Sub IAnonymousRecord_UpdateNamedProperty(ByVal PropertyName As String, ByVal PropertyValue As Variant)
+    UpdateNamedProperty PropertyName, PropertyValue
+End Sub
+
+Private Sub UpdateNamedProperty(ByVal PropertyName As String, ByVal PropertyValue As Variant)
     If this.NamedProperties.Exists(PropertyName) Then
         If IsObject(PropertyValue) Then
             Set this.NamedProperties(PropertyName) = PropertyValue
